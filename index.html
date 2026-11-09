@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="lt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Cyber City centras</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800&family=Work+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+:root{
+  --bg:#F5F6F8; --surface:#FFFFFF; --fg:#15181F; --muted:#666C7A;
+  --accent:#5B4EFF; --accent-fg:#FFFFFF; --border:#E1E3EA; --danger:#C0392B;
+  --todo:#5F687D; --doing:#946C00; --done:#1A7F4E;
+  --todo-bg:#EEF0F4; --doing-bg:#FBF2D9; --done-bg:#E2F3E9;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#101217; --surface:#1A1D25; --fg:#ECEEF3; --muted:#9BA1B0;
+    --accent:#8C7CFF; --accent-fg:#101217; --border:#2B2F3A; --danger:#FF7A6B;
+    --todo:#9199AD; --doing:#E0B33B; --done:#4ADE94;
+    --todo-bg:#22262F; --doing-bg:#2E2A1A; --done-bg:#16281F;
+    color-scheme: dark;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:var(--bg); color:var(--fg);
+  font:15px/1.45 "Work Sans", system-ui, -apple-system, sans-serif;
+  padding-left:max(16px, env(safe-area-inset-left,0px));
+  padding-right:max(16px, env(safe-area-inset-right,0px));
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+h1,h2{font-family:"Archivo", system-ui, sans-serif; text-wrap:balance; margin:0}
+.mono{font-family:"JetBrains Mono", ui-monospace, monospace; font-variant-numeric:tabular-nums}
+button, input, select, textarea{font:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+[hidden]{display:none!important}
+
+header.top{
+  position:sticky; top:0; z-index:5; background:var(--surface);
+  border-bottom:1px solid var(--border); margin:0 calc(-1 * max(16px, env(safe-area-inset-left,0px)));
+  padding:calc(12px + env(safe-area-inset-top,0px)) max(16px, env(safe-area-inset-right,0px)) 12px max(16px, env(safe-area-inset-left,0px));
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+}
+header.top h1{font-size:1.15rem; font-weight:800}
+header.top .sub{font-size:0.78rem; color:var(--muted)}
+.userbox{display:flex; align-items:center; gap:8px; font-size:0.78rem; color:var(--muted); flex-wrap:wrap; justify-content:flex-end}
+.linkbtn{background:none; border:none; color:var(--accent); padding:4px 2px; font-size:0.78rem; font-weight:600}
+
+main{max-width:1040px; margin:0 auto; padding-bottom:48px}
+
+/* Login */
+.login-wrap{min-height:70vh; display:grid; place-items:center; padding:32px 0}
+.login{
+  width:100%; max-width:380px; background:var(--surface); border:1px solid var(--border);
+  border-radius:14px; padding:24px; display:flex; flex-direction:column; gap:12px;
+}
+.login h2{font-size:1.3rem}
+.login p{margin:0; color:var(--muted); font-size:0.88rem}
+label{font-size:0.78rem; font-weight:600; display:flex; flex-direction:column; gap:4px}
+input, select, textarea{
+  padding:9px 11px; border-radius:8px; border:1px solid var(--border);
+  background:var(--bg); color:var(--fg); font-size:0.92rem; width:100%;
+}
+textarea{min-height:56px; resize:vertical}
+.btn{
+  background:var(--accent); color:var(--accent-fg); border:none; border-radius:8px;
+  padding:10px 16px; font-weight:700; font-size:0.9rem;
+}
+.btn:disabled{opacity:0.5; cursor:not-allowed}
+.msg{font-size:0.82rem; min-height:1.2em}
+.msg.err{color:var(--danger)}
+.msg.ok{color:var(--done)}
+
+/* Facts */
+.facts{display:grid; grid-template-columns:repeat(auto-fit, minmax(190px,1fr)); gap:10px; margin:18px 0}
+.fact{background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:14px 16px}
+.fact .label{font-size:0.68rem; text-transform:uppercase; letter-spacing:0.07em; color:var(--muted); margin-bottom:4px}
+.fact .value{font-weight:700}
+.fact .value.mono{color:var(--accent); font-size:1.05rem}
+
+.console{display:grid; grid-template-columns:1fr; gap:28px}
+@media (min-width:880px){ .console{grid-template-columns:1.6fr 1fr} }
+.panel h2{font-size:1rem; margin-bottom:10px; display:flex; align-items:center; gap:8px}
+.count{font-family:"JetBrains Mono",monospace; font-size:0.7rem; color:var(--muted); background:var(--border); border-radius:999px; padding:1px 7px}
+
+.board{display:grid; grid-template-columns:1fr; gap:14px}
+@media (min-width:560px){ .board{grid-template-columns:repeat(3,1fr)} }
+.column{min-width:0}
+.colhead{font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; padding:5px 10px; border-radius:7px; margin-bottom:8px; display:inline-block}
+.column[data-status="planuojama"] .colhead{background:var(--todo-bg); color:var(--todo)}
+.column[data-status="vykdoma"] .colhead{background:var(--doing-bg); color:var(--doing)}
+.column[data-status="atlikta"] .colhead{background:var(--done-bg); color:var(--done)}
+.cardlist{display:flex; flex-direction:column; gap:8px}
+.card{background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:10px 12px; font-size:0.86rem}
+.card .ctitle{font-weight:600; margin-bottom:4px; word-break:break-word}
+.card .meta{display:flex; flex-wrap:wrap; gap:4px 10px; font-size:0.74rem; color:var(--muted)}
+.card .note{font-size:0.78rem; color:var(--muted); margin-top:4px; word-break:break-word}
+.card .due.late{color:var(--danger); font-weight:700}
+.rowbtns{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px}
+.small{font-size:0.72rem; border:1px solid var(--border); background:var(--bg); color:var(--fg); border-radius:6px; padding:4px 8px}
+.small:hover{border-color:var(--accent)}
+.small.danger{color:var(--danger)}
+.empty{font-size:0.8rem; color:var(--muted); padding:6px 0}
+.editform{display:flex; flex-direction:column; gap:6px; margin-top:6px}
+
+.addform{background:var(--surface); border:1px dashed var(--border); border-radius:10px; padding:12px; margin-top:14px; display:flex; flex-direction:column; gap:8px}
+.addform .row{display:flex; gap:8px; flex-wrap:wrap}
+.addform .row > *{flex:1; min-width:130px}
+
+.timeline{display:flex; flex-direction:column}
+.tl{position:relative; padding:0 0 16px 20px; border-left:2px solid var(--border)}
+.tl:last-child{border-color:transparent}
+.tl::before{content:""; position:absolute; left:-6px; top:3px; width:10px; height:10px; border-radius:50%; background:var(--accent); border:2px solid var(--bg)}
+.tl .date{font-family:"JetBrains Mono",monospace; font-size:0.72rem; color:var(--accent); font-weight:700}
+.tl .text{font-size:0.88rem; margin-top:2px; word-break:break-word}
+.tl .by{font-size:0.7rem; color:var(--muted)}
+
+.dialog{background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px; margin:16px 0; display:flex; flex-direction:column; gap:10px; max-width:420px}
+.banner{background:var(--doing-bg); color:var(--fg); border-radius:8px; padding:8px 12px; font-size:0.82rem; margin-top:12px}
+footer{margin-top:36px; padding-top:14px; border-top:1px solid var(--border); font-size:0.74rem; color:var(--muted)}
+@media (prefers-reduced-motion: reduce){ *{transition:none!important; animation:none!important} }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div>
+    <h1>Cyber City centras</h1>
+    <div class="sub">Švitrigailos g. 36, Vilnius</div>
+  </div>
+  <div class="userbox" id="userbox" hidden>
+    <span id="whoami"></span>
+    <button class="linkbtn" id="btn-pw" type="button">Keisti slaptažodį</button>
+    <button class="linkbtn" id="btn-out" type="button">Atsijungti</button>
+  </div>
+</header>
+
+<main>
+  <!-- Login -->
+  <section class="login-wrap" id="view-login" hidden>
+    <form class="login" id="login-form">
+      <h2>Prisijungimas</h2>
+      <p>Prieiga tik projekto komandai.</p>
+      <label for="l-email">El. paštas
+        <input id="l-email" type="email" autocomplete="username" required>
+      </label>
+      <label for="l-pw">Slaptažodis
+        <input id="l-pw" type="password" autocomplete="current-password" required>
+      </label>
+      <button class="btn" type="submit" id="l-submit">Prisijungti</button>
+      <div class="msg" id="l-msg" role="status"></div>
+    </form>
+  </section>
+
+  <!-- No access -->
+  <section id="view-denied" hidden>
+    <div class="dialog">
+      <h2>Nėra prieigos</h2>
+      <p>Ši paskyra neturi prieigos prie projekto. Kreipkitės į Andrių.</p>
+      <button class="btn" type="button" id="denied-out">Atsijungti</button>
+    </div>
+  </section>
+
+  <!-- App -->
+  <section id="view-app" hidden>
+    <form class="dialog" id="pw-form" hidden>
+      <h2>Naujas slaptažodis</h2>
+      <label for="pw-new">Naujas slaptažodis (bent 8 simboliai)
+        <input id="pw-new" type="password" autocomplete="new-password" minlength="8" required>
+      </label>
+      <div class="row" style="display:flex; gap:8px">
+        <button class="btn" type="submit">Išsaugoti</button>
+        <button class="small" type="button" id="pw-cancel">Atšaukti</button>
+      </div>
+      <div class="msg" id="pw-msg" role="status"></div>
+    </form>
+
+    <div class="banner" id="offline" hidden>Ryšys nutrūko. Duomenys gali būti pasenę, perkraukite puslapį.</div>
+
+    <section class="facts" aria-label="Pagrindiniai faktai">
+      <div class="fact"><div class="label">Atidarymo terminas</div><div class="value mono" id="countdown">2027-03-11</div></div>
+      <div class="fact"><div class="label">Pirmas atsidaro</div><div class="value">Vakaro restoranas</div></div>
+      <div class="fact"><div class="label">Koncepcijos</div><div class="value">iLunch (dienos) + vakaro restoranas</div></div>
+      <div class="fact"><div class="label">Statusas</div><div class="value">Ketinimų protokolas pasirašytas</div></div>
+    </section>
+
+    <div class="console">
+      <section class="panel" aria-label="Užduotys">
+        <h2>Užduotys <span class="count" id="task-count">0</span></h2>
+        <div class="board">
+          <div class="column" data-status="planuojama"><span class="colhead">Planuojama</span><div class="cardlist" id="col-planuojama"></div></div>
+          <div class="column" data-status="vykdoma"><span class="colhead">Vykdoma</span><div class="cardlist" id="col-vykdoma"></div></div>
+          <div class="column" data-status="atlikta"><span class="colhead">Atlikta</span><div class="cardlist" id="col-atlikta"></div></div>
+        </div>
+        <form class="addform" id="task-form">
+          <div class="row">
+            <input id="t-title" type="text" placeholder="Nauja užduotis" maxlength="200" required aria-label="Užduotis">
+            <input id="t-owner" type="text" list="owners" placeholder="Atsakingas" maxlength="60" aria-label="Atsakingas">
+          </div>
+          <div class="row">
+            <input id="t-due" type="date" aria-label="Terminas">
+            <input id="t-note" type="text" placeholder="Pastaba" maxlength="300" aria-label="Pastaba">
+          </div>
+          <div><button class="btn" type="submit">+ Pridėti užduotį</button></div>
+        </form>
+      </section>
+
+      <section class="panel" aria-label="Sprendimai">
+        <h2>Sprendimų žurnalas <span class="count" id="dec-count">0</span></h2>
+        <div class="timeline" id="timeline"></div>
+        <form class="addform" id="dec-form">
+          <input id="d-date" type="date" aria-label="Data">
+          <textarea id="d-text" placeholder="Naujas sprendimas" maxlength="1000" required aria-label="Sprendimas"></textarea>
+          <div><button class="btn" type="submit">+ Pridėti įrašą</button></div>
+        </form>
+      </section>
+    </div>
+
+    <datalist id="owners">
+      <option value="Andrius"><option value="Zoja"><option value="Ignas">
+    </datalist>
+
+    <footer>Užduotys ir sprendimai atsinaujina visiems iš karto. Prieiga: Andrius, Zoja, Ignas.</footer>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+(function(){
+  "use strict";
+  var SUPABASE_URL = "https://ijswekdfnfyyklaodqet.supabase.co";
+  var SUPABASE_KEY = "sb_publishable_8NNwq2Nlsj8XtxYcwX5wBg_EC6Wo_1b";
+  var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  var $ = function(id){ return document.getElementById(id); };
+  var STATUSES = ["planuojama","vykdoma","atlikta"];
+  var LABEL = {planuojama:"Planuojama", vykdoma:"Vykdoma", atlikta:"Atlikta"};
+  var tasks = [], decisions = [], channel = null, editingId = null, me = null;
+
+  function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+  function today(){ var d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+  function show(view){
+    ["view-login","view-denied","view-app"].forEach(function(v){ $(v).hidden = (v !== view); });
+    $("userbox").hidden = (view !== "view-app");
+  }
+
+  (function(){
+    var days = Math.ceil((new Date("2027-03-11T00:00:00") - new Date()) / 86400000);
+    $("countdown").textContent = days > 0 ? days + " d. iki 2027-03-11" : "2027-03-11";
+  })();
+
+  // ---------- Auth ----------
+  $("login-form").addEventListener("submit", async function(e){
+    e.preventDefault();
+    var msg = $("l-msg"); msg.className = "msg"; msg.textContent = "";
+    $("l-submit").disabled = true;
+    var res = await sb.auth.signInWithPassword({ email: $("l-email").value.trim().toLowerCase(), password: $("l-pw").value });
+    $("l-submit").disabled = false;
+    if(res.error){ msg.className = "msg err"; msg.textContent = "Neteisingas el. paštas arba slaptažodis."; return; }
+    $("l-pw").value = "";
+  });
+
+  async function signOut(){ if(channel){ sb.removeChannel(channel); channel = null; } await sb.auth.signOut(); }
+  $("btn-out").addEventListener("click", signOut);
+  $("denied-out").addEventListener("click", signOut);
+
+  $("btn-pw").addEventListener("click", function(){ $("pw-form").hidden = false; $("pw-new").focus(); });
+  $("pw-cancel").addEventListener("click", function(){ $("pw-form").hidden = true; $("pw-msg").textContent = ""; });
+  $("pw-form").addEventListener("submit", async function(e){
+    e.preventDefault();
+    var msg = $("pw-msg");
+    var res = await sb.auth.updateUser({ password: $("pw-new").value });
+    if(res.error){ msg.className = "msg err"; msg.textContent = "Nepavyko pakeisti: " + res.error.message; return; }
+    msg.className = "msg ok"; msg.textContent = "Slaptažodis pakeistas.";
+    $("pw-new").value = "";
+    setTimeout(function(){ $("pw-form").hidden = true; msg.textContent = ""; }, 1500);
+  });
+
+  var started = false;
+  sb.auth.onAuthStateChange(function(event, session){
+    // defer to avoid calling supabase inside the callback
+    setTimeout(function(){ handleSession(session); }, 0);
+  });
+
+  async function handleSession(session){
+    if(!session){ started = false; me = null; show("view-login"); return; }
+    if(started) return;
+    started = true;
+    me = session.user.email;
+    var r = await sb.rpc("is_member");
+    if(r.error || r.data !== true){ show("view-denied"); return; }
+    var n = await sb.from("allowed_emails").select("display_name").eq("email", me).maybeSingle();
+    $("whoami").textContent = (n.data && n.data.display_name) || me;
+    show("view-app");
+    await loadAll();
+    subscribe();
+  }
+
+  // ---------- Data ----------
+  async function loadAll(){
+    var t = await sb.from("tasks").select("*").order("created_at");
+    var d = await sb.from("decisions").select("*").order("date", {ascending:false});
+    if(!t.error) tasks = t.data;
+    if(!d.error) decisions = d.data;
+    $("offline").hidden = !(t.error || d.error);
+    renderTasks(); renderDecisions();
+  }
+
+  function subscribe(){
+    channel = sb.channel("cyber-city")
+      .on("postgres_changes", {event:"*", schema:"public", table:"tasks"}, loadAll)
+      .on("postgres_changes", {event:"*", schema:"public", table:"decisions"}, loadAll)
+      .subscribe(function(status){
+        $("offline").hidden = !(status === "CHANNEL_ERROR" || status === "TIMED_OUT");
+      });
+  }
+
+  // ---------- Tasks ----------
+  function renderTasks(){
+    $("task-count").textContent = tasks.length;
+    STATUSES.forEach(function(s){
+      var col = $("col-" + s); col.innerHTML = "";
+      var list = tasks.filter(function(t){ return t.status === s; })
+        .sort(function(a,b){ return (a.due || "9999") < (b.due || "9999") ? -1 : (a.due || "9999") > (b.due || "9999") ? 1 : 0; });
+      if(!list.length){ col.innerHTML = "<div class='empty'>Tuščia</div>"; return; }
+      list.forEach(function(t){ col.appendChild(taskCard(t)); });
+    });
+  }
+
+  function taskCard(t){
+    var card = document.createElement("div");
+    card.className = "card";
+    if(editingId === t.id){
+      card.innerHTML =
+        "<form class='editform'>" +
+        "<input name='title' maxlength='200' required value='" + esc(t.title) + "' aria-label='Užduotis'>" +
+        "<input name='owner' list='owners' maxlength='60' value='" + esc(t.owner) + "' placeholder='Atsakingas' aria-label='Atsakingas'>" +
+        "<input name='due' type='date' value='" + esc(t.due || "") + "' aria-label='Terminas'>" +
+        "<input name='note' maxlength='300' value='" + esc(t.note) + "' placeholder='Pastaba' aria-label='Pastaba'>" +
+        "<div class='rowbtns'><button class='small' type='submit'>Išsaugoti</button><button class='small' type='button' data-a='cancel'>Atšaukti</button></div>" +
+        "</form>";
+      var f = card.querySelector("form");
+      f.addEventListener("submit", async function(e){
+        e.preventDefault();
+        var fd = new FormData(f);
+        var r = await sb.from("tasks").update({ title: fd.get("title").trim(), owner: fd.get("owner").trim(), due: fd.get("due") || null, note: fd.get("note").trim() }).eq("id", t.id);
+        if(r.error){ alert_(r.error); return; }
+        editingId = null; loadAll();
+      });
+      card.querySelector("[data-a=cancel]").addEventListener("click", function(){ editingId = null; renderTasks(); });
+      return card;
+    }
+    var late = t.due && t.status !== "atlikta" && t.due < today();
+    var meta = [];
+    if(t.owner) meta.push("<span>" + esc(t.owner) + "</span>");
+    if(t.due) meta.push("<span class='due mono" + (late ? " late" : "") + "'>" + esc(t.due) + "</span>");
+    card.innerHTML =
+      "<div class='ctitle'>" + esc(t.title) + "</div>" +
+      (meta.length ? "<div class='meta'>" + meta.join("") + "</div>" : "") +
+      (t.note ? "<div class='note'>" + esc(t.note) + "</div>" : "") +
+      "<div class='rowbtns'></div>";
+    var row = card.querySelector(".rowbtns");
+    STATUSES.filter(function(s){ return s !== t.status; }).forEach(function(s){
+      row.appendChild(btn("→ " + LABEL[s], "small", async function(){
+        var r = await sb.from("tasks").update({status: s}).eq("id", t.id);
+        if(r.error) alert_(r.error); else loadAll();
+      }));
+    });
+    row.appendChild(btn("Redaguoti", "small", function(){ editingId = t.id; renderTasks(); }));
+    row.appendChild(confirmBtn(async function(){
+      var r = await sb.from("tasks").delete().eq("id", t.id);
+      if(r.error) alert_(r.error); else loadAll();
+    }));
+    return card;
+  }
+
+  $("task-form").addEventListener("submit", async function(e){
+    e.preventDefault();
+    var title = $("t-title").value.trim(); if(!title) return;
+    var r = await sb.from("tasks").insert({ title: title, owner: $("t-owner").value.trim(), due: $("t-due").value || null, note: $("t-note").value.trim() });
+    if(r.error){ alert_(r.error); return; }
+    e.target.reset(); loadAll();
+  });
+
+  // ---------- Decisions ----------
+  function renderDecisions(){
+    $("dec-count").textContent = decisions.length;
+    var el = $("timeline"); el.innerHTML = "";
+    if(!decisions.length){ el.innerHTML = "<div class='empty'>Įrašų dar nėra.</div>"; return; }
+    decisions.forEach(function(d){
+      var row = document.createElement("div");
+      row.className = "tl";
+      row.innerHTML = "<div class='date'>" + esc(d.date) + "</div><div class='text'>" + esc(d.text) + "</div>" +
+        (d.created_by ? "<div class='by'>" + esc(d.created_by) + "</div>" : "") + "<div class='rowbtns'></div>";
+      row.querySelector(".rowbtns").appendChild(confirmBtn(async function(){
+        var r = await sb.from("decisions").delete().eq("id", d.id);
+        if(r.error) alert_(r.error); else loadAll();
+      }));
+      el.appendChild(row);
+    });
+  }
+
+  $("dec-form").addEventListener("submit", async function(e){
+    e.preventDefault();
+    var text = $("d-text").value.trim(); if(!text) return;
+    var r = await sb.from("decisions").insert({ text: text, date: $("d-date").value || today(), created_by: me });
+    if(r.error){ alert_(r.error); return; }
+    e.target.reset(); loadAll();
+  });
+
+  // ---------- Helpers ----------
+  function btn(label, cls, fn){ var b = document.createElement("button"); b.type = "button"; b.className = cls; b.textContent = label; b.addEventListener("click", fn); return b; }
+  function confirmBtn(fn){
+    var b = btn("Ištrinti", "small danger", function(){
+      if(b.dataset.armed){ fn(); return; }
+      b.dataset.armed = "1"; b.textContent = "Tikrai ištrinti?";
+      setTimeout(function(){ delete b.dataset.armed; b.textContent = "Ištrinti"; }, 3000);
+    });
+    return b;
+  }
+  function alert_(err){ var o = $("offline"); o.hidden = false; o.textContent = "Klaida: " + (err.message || err); }
+})();
+</script>
+</body>
+</html>
